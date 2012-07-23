@@ -1,5 +1,10 @@
 /* Slider
 ================================================== */
+/*	* CodeKit Import
+	* http://incident57.com/codekit/
+================================================== */
+// @codekit-append "VMM.Slider.Slide.js";
+
 if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 	
 	VMM.Slider = function(parent, parent_config) {

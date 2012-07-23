@@ -1,5 +1,6 @@
 /* Slider Slide 
 ================================================== */
+
 if (typeof VMM.Slider != 'undefined') {
 	VMM.Slider.Slide = function(d, _parent) {
 		
@@ -174,8 +175,8 @@ if (typeof VMM.Slider != 'undefined') {
 		
 		var buildSlide = function() {
 			trace("BUILDSLIDE");
-			$wrap	=	VMM.appendAndGetElement(element, "<div>", "content");
-			$slide	=	VMM.appendAndGetElement($wrap, "<div>");
+			$wrap	= VMM.appendAndGetElement(element, "<div>", "content");
+			$slide	= VMM.appendAndGetElement($wrap, "<div>");
 			
 			/* DATE
 			================================================== */
@@ -214,15 +215,15 @@ if (typeof VMM.Slider != 'undefined') {
 			/* TEXT
 			================================================== */
 			if (data.text != null && data.text != "") {
-				c.has.text		=	true;
-				c.text			+=	VMM.createElement("p", VMM.Util.linkify_with_twitter(data.text, "_blank"));
+				c.has.text		=  true;
+				c.text			+= VMM.createElement("p", VMM.Util.linkify_with_twitter(data.text, "_blank"));
 			}
 			
 			if (c.has.text || c.has.headline) {
-				c.text			=	VMM.createElement("div", c.text, "container");
+				c.text		= VMM.createElement("div", c.text, "container");
 				//$text		=	VMM.appendAndGetElement($slide, "<div>", "text", c.text);
 				
-				$text		=	VMM.appendAndGetElement($slide, "<div>", "text", VMM.TextElement.create(c.text));
+				$text		= VMM.appendAndGetElement($slide, "<div>", "text", VMM.TextElement.create(c.text));
 				
 			}
 			
@@ -236,8 +237,8 @@ if (typeof VMM.Slider != 'undefined') {
 			================================================== */
 			if (data.asset != null && data.asset != "") {
 				if (data.asset.media != null && data.asset.media != "") {
-					c.has.media	=	true;
-					$media		=	VMM.appendAndGetElement($slide, "<div>", "media", VMM.MediaElement.create(data.asset, data.uniqueid));
+					c.has.media	= true;
+					$media		= VMM.appendAndGetElement($slide, "<div>", "media", VMM.MediaElement.create(data.asset, data.uniqueid));
 				}
 			}
 			
