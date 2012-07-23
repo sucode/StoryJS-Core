@@ -667,10 +667,10 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 			VMM.attachElement(layout, "");
 			
 			// Get DOM Objects to local objects
-			$slider = VMM.getElement(layout);
-			$slider_mask = VMM.appendAndGetElement($slider, "<div>", "slider-container-mask");
-			$slider_container = VMM.appendAndGetElement($slider_mask, "<div>", "slider-container");
-			$slides_items = VMM.appendAndGetElement($slider_container, "<div>", "slider-item-container");
+			$slider				= VMM.getElement(layout);
+			$slider_mask		= VMM.appendAndGetElement($slider, "<div>", "slider-container-mask");
+			$slider_container	= VMM.appendAndGetElement($slider_mask, "<div>", "slider-container");
+			$slides_items		= VMM.appendAndGetElement($slider_container, "<div>", "slider-item-container");
 			
 			// BUILD NAVIGATION
 			buildNavigation();

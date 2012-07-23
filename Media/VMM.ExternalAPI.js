@@ -2,7 +2,28 @@
 ================================================== */
 if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 	
-	VMM.ExternalAPI = {
+	VMM.ExternalAPI = ({
+		
+		keys: {
+			google:				"",
+			flickr:				"",
+			twitter:			""
+		},
+		
+		keys_master: {
+			vp:			"Pellentesque nibh felis, eleifend id, commodo in, interdum vitae, leo",
+			flickr:		"RAIvxHY4hE/Elm5cieh4X5ptMyDpj7MYIxziGxi0WGCcy1s+yr7rKQ==",
+			google:		"jwNGnYw4hE9lmAez4ll0QD+jo6SKBJFknkopLS4FrSAuGfIwyj57AusuR0s8dAo=",
+			twitter:	""
+		},
+		
+		init: function() {
+			return this;
+		},
+		
+		setKeys: function(d) {
+			VMM.ExternalAPI.keys	= d;
+		},
 		
 		pushQues: function() {
 			
@@ -299,6 +320,14 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 		
 		googlemaps: {
 			
+			maptype: "toner",
+			
+			setMapType: function(d) {
+				if (d != "") {
+					VMM.ExternalAPI.googlemaps.maptype = d;
+				}
+			},
+			
 			get: function(m) {
 				var timer, 
 					api_key,
@@ -308,10 +337,10 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				
 				map_vars = VMM.Util.getUrlVars(m.id);
 				
-				if (VMM.master_config.Timeline.api_keys.google != "") {
-					api_key = VMM.master_config.Timeline.api_keys.google;
+				if (VMM.ExternalAPI.keys.google != "") {
+					api_key = VMM.ExternalAPI.keys.google;
 				} else {
-					api_key = Aes.Ctr.decrypt(VMM.master_config.api_keys_master.google, VMM.master_config.vp, 256);
+					api_key = Aes.Ctr.decrypt(VMM.ExternalAPI.keys_master.google, VMM.ExternalAPI.keys_master.vp, 256);
 				}
 				
 				map_url = "http://maps.googleapis.com/maps/api/js?key=" + api_key + "&libraries=places&sensor=false&callback=VMM.ExternalAPI.googlemaps.onMapAPIReady";
@@ -333,9 +362,19 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 			},
 			
 			create: function(m) {
-				var map_attribution = "";
-				var layer;
-				var map;
+				var map_attribution	= "",
+					layer,
+					map,
+					map_options,
+					unique_map_id	= m.id.toString() + "_gmap",
+					map_attribution_html	= "",
+					location		= new google.maps.LatLng(41.875696,-87.624207),
+					latlong,
+					zoom			= 11,
+					has_location	= false,
+					has_zoom		= false,
+					map_bounds;
+					
 				
 				function mapProvider(name) {
 					if (name in VMM.ExternalAPI.googlemaps.map_providers) {
@@ -383,32 +422,25 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				/* Make the Map
 				================================================== */
 				
-				
-				if (type.of(VMM.master_config.Timeline.maptype) == "string") {
-					if (VMM.ExternalAPI.googlemaps.defaultType(VMM.master_config.Timeline.maptype)) {
-						layer				=	google.maps.MapTypeId[VMM.master_config.Timeline.maptype.toUpperCase()];
+				if (VMM.ExternalAPI.googlemaps.maptype != "") {
+					if (VMM.ExternalAPI.googlemaps.defaultType(VMM.ExternalAPI.googlemaps.maptype)) {
+						layer				=	google.maps.MapTypeId[VMM.ExternalAPI.googlemaps.maptype.toUpperCase()];
 					} else {
-						layer				=	VMM.master_config.Timeline.maptype;
+						layer				=	VMM.ExternalAPI.googlemaps.maptype;
 					}
 				} else {
 					layer					=	"toner";
 				}
 				
-				var location				=	new google.maps.LatLng(41.875696,-87.624207);
-				var latlong;
-				var zoom					=	11;
-				var has_location			=	false;
-				var has_zoom				=	false;
-				var map_bounds;
 				
 				if (type.of(VMM.Util.getUrlVars(m.url)["ll"]) == "string") {
-					has_location			=	true;
-					latlong					=	VMM.Util.getUrlVars(m.url)["ll"].split(",");
-					location				=	new google.maps.LatLng(parseFloat(latlong[0]),parseFloat(latlong[1]));
+					has_location			= true;
+					latlong					= VMM.Util.getUrlVars(m.url)["ll"].split(",");
+					location				= new google.maps.LatLng(parseFloat(latlong[0]),parseFloat(latlong[1]));
 					
 				} else if (type.of(VMM.Util.getUrlVars(m.url)["sll"]) == "string") {
-					latlong					=	VMM.Util.getUrlVars(m.url)["sll"].split(",");
-					location				=	new google.maps.LatLng(parseFloat(latlong[0]),parseFloat(latlong[1]));
+					latlong					= VMM.Util.getUrlVars(m.url)["sll"].split(",");
+					location				= new google.maps.LatLng(parseFloat(latlong[0]),parseFloat(latlong[1]));
 				} 
 				
 				if (type.of(VMM.Util.getUrlVars(m.url)["z"]) == "string") {
@@ -416,7 +448,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 					zoom					=	parseFloat(VMM.Util.getUrlVars(m.url)["z"]);
 				}
 				
-				var map_options = {
+				map_options = {
 					zoom:						zoom,
 					disableDefaultUI:			true,
 					mapTypeControl:				false,
@@ -432,18 +464,17 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				    }
 				}
 				
-				var unique_map_id			=	m.id.toString() + "_gmap";
 				
 				VMM.attachElement("#" + m.id, "<div class='google-map' id='" + unique_map_id + "' style='width=100%;height=100%;'></div>");
 				
-				var map						=	new google.maps.Map(document.getElementById(unique_map_id), map_options);
+				map		= new google.maps.Map(document.getElementById(unique_map_id), map_options);
 				
-				if (VMM.ExternalAPI.googlemaps.defaultType(VMM.master_config.Timeline.maptype)) {
+				if (VMM.ExternalAPI.googlemaps.defaultType(VMM.ExternalAPI.googlemaps.maptype)) {
 					
 				} else {
 					map.mapTypes.set(layer, new google.maps.VeriteMapType(layer));
 					// ATTRIBUTION
-					var map_attribution_html =	"<div class='map-attribution'><div class='attribution-text'>" + map_attribution + "</div></div>";
+					map_attribution_html =	"<div class='map-attribution'><div class='attribution-text'>" + map_attribution + "</div></div>";
 					VMM.appendElement("#"+unique_map_id, map_attribution_html);
 				}
 				
@@ -451,10 +482,12 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				
 				// KML
 				function loadKML() {
-					var kml_url				=	m.url + "&output=kml";
-					kml_url					=	kml_url.replace("&output=embed", "");
-					var kml_layer			=	new google.maps.KmlLayer(kml_url, {preserveViewport:true});
-					var infowindow			=	new google.maps.InfoWindow();
+					var kml_url, kml_layer, infowindow, text;
+					
+					kml_url				= m.url + "&output=kml";
+					kml_url				= kml_url.replace("&output=embed", "");
+					kml_layer			= new google.maps.KmlLayer(kml_url, {preserveViewport:true});
+					infowindow			= new google.maps.InfoWindow();
 					kml_layer.setMap(map);
 
 					google.maps.event.addListenerOnce(kml_layer, "defaultviewport_changed", function() {
@@ -468,7 +501,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 					});
 					
 					google.maps.event.addListener(kml_layer, 'click', function(kmlEvent) {
-						var text			=	kmlEvent.featureData.description;
+						text			= kmlEvent.featureData.description;
 						showInfoWindow(text);
 						
 						function showInfoWindow(c) {
@@ -749,7 +782,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				var api_key,
 					callback_timeout= setTimeout(callback, VMM.master_config.timers.api, flick);
 					
-				if (VMM.master_config.Timeline.api_keys.flickr != "") {
+				if (typeof VMM.master_config.Timeline != 'undefined' && VMM.master_config.Timeline.api_keys.flickr != "") {
 					api_key = VMM.master_config.Timeline.api_keys.flickr;
 				} else {
 					api_key = Aes.Ctr.decrypt(VMM.master_config.api_keys_master.flickr, VMM.master_config.vp, 256)
@@ -1139,7 +1172,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 			
 		}
 	
-	}
+	}).init();
 	
 }
 
