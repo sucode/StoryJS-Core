@@ -3,7 +3,7 @@
 if(typeof VMM != 'undefined' && typeof VMM.FileExtention == 'undefined') {
 	VMM.FileExtention = {
 		googleDocType: function(url) {
-			var fileName			= url,
+			var fileName			= url.replace(/\s\s*$/, ''),
 				fileExtension		= "",
 				validFileExtensions = ["DOC","DOCX","XLS","XLSX","PPT","PPTX","PDF","PAGES","AI","PSD","TIFF","DXF","SVG","EPS","PS","TTF","XPS","ZIP","RAR"],
 				flag				= false;

@@ -6,8 +6,9 @@
 ================================================== */
 if(typeof VMM != 'undefined' && typeof VMM.MediaType == 'undefined') {
 	
-	VMM.MediaType = function(d) {
-		var success	= false,
+	VMM.MediaType = function(_d) {
+		var d		= _d.replace(/^\s\s*/, '').replace(/\s\s*$/, ''),
+			success	= false,
 			media	= {
 				type:		"unknown",
 				id:			"",

@@ -1,10 +1,12 @@
-/*	VéritéCo JS Master
-	Version: 0.6
-	Date: June 19, 2012
-	Copyright 2012 VéritéCo unless part of TimelineJS, 
-	if part of TimelineJS then it inherits TimelineJS's license.
-	Designed and built by Zach Wise digitalartwork.net
-================================================== */
+/**
+	* VéritéCo JS Core
+	* Designed and built by Zach Wise at VéritéCo zach@verite.co
+
+	* This Source Code Form is subject to the terms of the Mozilla Public
+	* License, v. 2.0. If a copy of the MPL was not distributed with this
+	* file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+*/  
 
 
 /*	Simple JavaScript Inheritance
