@@ -3,6 +3,7 @@
 if(typeof VMM != 'undefined') {
 	VMM.Language = {
 		lang: "ar",
+		right_to_left: true,
 		api: {
 			wikipedia: "ar"
 		},
