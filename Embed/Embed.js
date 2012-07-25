@@ -1,13 +1,13 @@
 /*
-	VéritéCo Embed Loader 0.8
+	VéritéCo StoryJS Embed Loader 1.1
 	Designed and built by Zach Wise digitalartwork.net
 	Date: June 21, 2012
 */  
 
 /* 	CodeKit Import
-	http://incident57.com/codekit/
+	http://incident57.com/codekit/ 
 ================================================== */
-// @codekit-prepend "../Core/Library/Embed.LoadLib.js";
+// @codekit-prepend "Embed.LoadLib.js";
 
 var WebFontConfig;
 
@@ -15,6 +15,7 @@ if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
 	// REPLACE WITH YOUR BASEPATH IF YOU WANT OTHERWISE IT WILL TRY AND FIGURE IT OUT
 	var embed_path = getScriptPath("storyjs-embed.js").split("js/")[0];
 }
+
 function getScriptPath(scriptname) {
 	var scriptTags = document.getElementsByTagName('script'),
 		script_path = "",
@@ -30,17 +31,32 @@ function getScriptPath(scriptname) {
 	return script_path.split('?')[0].split('/').slice(0, -1).join('/') + script_path_end;
 }
 
-/* TIMELINE LOADER
+/* CHECK TO SEE IF A CONFIG IS ALREADY DEFINED (FOR EASY EMBED)
 ================================================== */
 (function() {
-	
-	
+	if (typeof url_config == 'object') {
+		createStoryJS(url_config);
+	} else if (typeof timeline_config == 'object') {
+		createStoryJS(timeline_config);
+	} else if (typeof storyjs_config == 'object') {
+		createStoryJS(storyjs_config);
+	} else if (typeof config == 'object') {
+		createStoryJS(config);
+	} else {
+		// No existing config. Call createStoryJS(your_config) manually with a config
+	}
+})();
+
+/* CREATE StoryJS Embed
+================================================== */
+function createStoryJS(c, src) {
 	/* VARS
 	================================================== */
-	var storyjs_embedjs, t, te, x, isCDN = false,
-		js_version = "1.71",
-		jquery_version_required = "1.7.1",
-		jquery_version = "",
+	var storyjs_embedjs, t, te, x,
+		isCDN					= false,
+		js_version				= "1.71",
+		jquery_version_required	= "1.7.1",
+		jquery_version			= "",
 		ready = {
 			timeout:	"",
 			checks:		0,
@@ -79,8 +95,8 @@ function getScriptPath(scriptname) {
 			source:		'https://docs.google.com/spreadsheet/pub?key=0Agl_Dv6iEbDadFYzRjJPUGktY0NkWXFUWkVIZDNGRHc&output=html',
 			lang:		'en',
 			font:		'default',
-			css:		path.css + 'sliderjs.css?'+js_version,
-			js:			path.js + 'sliderjs-min.js?'+js_version
+			css:		path.css + 'timeline.css?'+js_version,
+			js:			path.js + 'timeline-min.js?'+js_version
 		},
 		font_presets = [
 			{ name:	"Merriweather-NewsCycle",		google:	[ 'News+Cycle:400,700:latin', 'Merriweather:400,700,900:latin' ] },
@@ -100,45 +116,36 @@ function getScriptPath(scriptname) {
 			{ name:	"Lora-Istok",					google:	[ 'Lora:400,700,400italic,700italic:latin', 'Istok+Web:400,700,400italic,700italic:latin' ] },
 			{ name:	"Pacifico-Arimo",				google:	[ 'Pacifico::latin', 'Arimo:400,700,400italic,700italic:latin' ] }
 		];
-
+			
 	/* BUILD CONFIG
-	================================================== */
-	if (typeof url_config == 'object') {
-		storyjs_e_config.height = "100%";
-		for (x in url_config) {
-			if (Object.prototype.hasOwnProperty.call(url_config, x)) {
-				storyjs_e_config[x] = url_config[x];
-			}
-		}
-		if (storyjs_e_config.source.match("docs.google.com")) {
-		
-		} else if (storyjs_e_config.source.match("json")) {
-		
-		} else if (storyjs_e_config.source.match("storify")) {
-		
-		} else {
-			storyjs_e_config.source = "https://docs.google.com/spreadsheet/pub?key=" + storyjs_e_config.source + "&output=html";
-		}
-		isCDN = true;
-	} else if (typeof timeline_config == 'object') {
-		for (x in timeline_config) {
-			if (Object.prototype.hasOwnProperty.call(timeline_config, x)) {
-				storyjs_e_config[x] = timeline_config[x];
-			}
-		}
-	} else if (typeof storyjs_config == 'object') {
-		for (x in storyjs_config) {
-			if (Object.prototype.hasOwnProperty.call(storyjs_config, x)) {
-				storyjs_e_config[x] = storyjs_config[x];
-			}
-		}
-	} else if (typeof config == 'object') {
-		for (x in config) {
-			if (Object.prototype.hasOwnProperty.call(config, x)) {
-				storyjs_e_config[x] = config[x];
+	================================================== */	
+	if (typeof c == 'object') {
+		for (x in c) {
+			if (Object.prototype.hasOwnProperty.call(c, x)) {
+				storyjs_e_config[x] = c[x];
 			}
 		}
 	}
+		
+	if (typeof src != 'undefined') {
+		storyjs_e_config.source = src;
+	}
+		
+	/* CDN VERSION?
+	================================================== */
+	if (typeof url_config == 'object') {
+		isCDN = true;
+			
+		/* IS THE SOURCE GOOGLE SPREADSHEET WITH JUST THE KEY?
+		================================================== */
+		if (storyjs_e_config.source.match("docs.google.com") || storyjs_e_config.source.match("json") || storyjs_e_config.source.match("storify") ) {
+				
+		} else {
+			storyjs_e_config.source = "https://docs.google.com/spreadsheet/pub?key=" + storyjs_e_config.source + "&output=html";
+		}
+			
+	}
+		
 	/* DETERMINE TYPE
 	================================================== */
 	if (storyjs_e_config.js.match("/")) {
@@ -162,17 +169,28 @@ function getScriptPath(scriptname) {
 	} else {
 		path.locale = path.locale + storyjs_e_config.lang + ".js?" + js_version;
 	}
+		
 	// Check for old installs still using the old method of language
 	if (storyjs_e_config.js.match("locale")) {
 		storyjs_e_config.lang = storyjs_e_config.js.split("locale/")[1].replace(".js", "");
 	}
+		
 	/* PREPARE
 	================================================== */
 	createEmbedDiv();
+	load_css();
 	
 	/* Load CSS
 	================================================== */
-	LazyLoad.css(storyjs_e_config.css, onloaded_css);
+	function load_css() {
+		LoadLib.css(storyjs_e_config.css, onloaded_css);
+	}
+	
+	/* Load CSS
+	================================================== */
+	function load_js() {
+		LoadLib.js(storyjs_e_config.js, onloaded_js);
+	}
 	
 	/* Load FONT
 	================================================== */
@@ -190,7 +208,7 @@ function getScriptPath(scriptname) {
 			path.font.name	= storyjs_e_config.font;
 			path.font.css	= path.font.css + storyjs_e_config.font + ".css?" + js_version;
 		}
-		LazyLoad.css(path.font.css, onloaded_font_css);
+		LoadLib.css(path.font.css, onloaded_font_css);
 		
 		// FONT GOOGLE JS
 		for(var i = 0; i < font_presets.length; i++) {
@@ -201,7 +219,7 @@ function getScriptPath(scriptname) {
 		}
 		
 		if (path.font.google) {
-			LazyLoad.js(path.font.js, onloaded_font_js);
+			LoadLib.js(path.font.js, onloaded_font_js);
 		} else {
 			ready.font.js		= true;
 		}
@@ -227,7 +245,7 @@ function getScriptPath(scriptname) {
 	    ready.jquery = false;
 	}
 	if (!ready.jquery) {
-		LazyLoad.js(path.jquery, onloaded_jquery);
+		LoadLib.js(path.jquery, onloaded_jquery);
 	} else {
 		onloaded_jquery();
 	}
@@ -236,12 +254,12 @@ function getScriptPath(scriptname) {
 	================================================== */
 	
 	function onloaded_jquery() {
-		LazyLoad.js(storyjs_e_config.js, onloaded_js);
+		LoadLib.js(storyjs_e_config.js, onloaded_js);
 	}
 	function onloaded_js() {
 		ready.js = true;
 		if (storyjs_e_config.lang != "en") {
-			LazyLoad.js(path.locale, onloaded_language);
+			load_js();
 		} else {
 			ready.language = true;
 		}
@@ -286,6 +304,8 @@ function getScriptPath(scriptname) {
 	/* Build Timeline
 	================================================== */
 	function createEmbedDiv() {
+		var embed_classname	= "storyjs-embed";
+		
 		t = document.createElement('div');
 		
 		if (storyjs_e_config.embed_id != "") {
@@ -299,15 +319,16 @@ function getScriptPath(scriptname) {
 		
 		if (storyjs_e_config.width.toString().match("%") ) {
 			te.style.width = storyjs_e_config.width;
-			te.setAttribute("class", "full-embed ");
-			te.setAttribute("className", "full-embed "); 
+			embed_classname	+= " full-embed";
 		} else {
-			te.setAttribute("class", " sized-embed");
-			te.setAttribute("className", " sized-embed"); 
+			embed_classname	+= " sized-embed";
 			storyjs_e_config.width = storyjs_e_config.width - 2;
 			te.style.width = (storyjs_e_config.width) + 'px';
 		}
-	
+		
+		te.setAttribute("class", embed_classname);
+		te.setAttribute("className", embed_classname); 
+		
 		if (storyjs_e_config.height.toString().match("%") ) {
 			te.style.height = storyjs_e_config.height;
 		} else {
@@ -320,13 +341,11 @@ function getScriptPath(scriptname) {
 	
 	function buildEmbed() {
 		VMM.debug = storyjs_e_config.debug;
-		storyjs_embedjs = new VMM.SliderJS(storyjs_e_config.id);
+		storyjs_embedjs = new VMM.Timeline(storyjs_e_config.id);
 		storyjs_embedjs.init(storyjs_e_config);
 		if (isCDN) {
 			VMM.bindEvent(global, onHeadline, "HEADLINE");
 		}
-	};
-	
-	
-	
-})();
+	}
+		
+}
