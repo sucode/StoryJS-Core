@@ -8,6 +8,8 @@ if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
 	var embed_path = getScriptPath("timeline-embed-generator.js").split("js/")[0];
 	if (embed_path.match("http")) {
 		embed_path = embed_path;
+	} else if (embed_path == "/") {
+		embed_path = "index.html";
 	} else {
 		embed_path = embed_path + "index.html";
 	}
@@ -55,20 +57,23 @@ function getUrlVars(string) {
 
 function getLinkAndIframe() {
 	
-	var theobj			= {},
-		e_source		= document.getElementById('embed-source-url'),
-		e_width			= document.getElementById('embed-width'),
-		e_height		= document.getElementById('embed-height'),
-		e_maptype		= document.getElementById('embed-maptype'),
-		e_language		= document.getElementById('embed-language'),
-		e_embed			= document.getElementById('embed_code'),
-		e_font			= document.getElementById('embed-font'),
-		e_wordpress		= document.getElementById('embed-wordpressplugin'),
-		e_startatend	= document.getElementById('embed-startatend'),
-		e_hashbookmark	= document.getElementById('embed-hashbookmark'),
-		e_startatslide	= document.getElementById('embed-startatslide'),
-		start_at_end	= false,
-		hash_bookmark	= false,
+	var theobj				= {},
+		e_source			= document.getElementById('embed-source-url'),
+		e_width				= document.getElementById('embed-width'),
+		e_height			= document.getElementById('embed-height'),
+		e_maptype			= document.getElementById('embed-maptype'),
+		e_language			= document.getElementById('embed-language'),
+		e_embed				= document.getElementById('embed_code'),
+		e_font				= document.getElementById('embed-font'),
+		e_wordpress			= document.getElementById('embed-wordpressplugin'),
+		e_startatend		= document.getElementById('embed-startatend'),
+		e_hashbookmark		= document.getElementById('embed-hashbookmark'),
+		e_startzoomadjust	= document.getElementById('embed-startzoomadjust'),
+		e_startatslide		= document.getElementById('embed-startatslide'),
+		e_debug				= document.getElementById('embed-debug'),
+		start_at_end		= false,
+		hash_bookmark		= false,
+		is_debug			= false,
 		iframe,
 		link,
 		vars,
@@ -99,6 +104,12 @@ function getLinkAndIframe() {
 		hash_bookmark = true;
 	}
 	
+	/* DEBUG
+	================================================== */
+	if (e_debug.checked) {
+		is_debug = true;
+	}
+	
 	/* WORDPRESS
 	================================================== */
 	wp		= "[timeline ";
@@ -119,8 +130,15 @@ function getLinkAndIframe() {
 	if (hash_bookmark) {
 		wp	+= "hash_bookmark='" + hash_bookmark + "' ";
 	}
+	if (is_debug) {
+		wp	+= "debug='" + is_debug + "' ";
+	}
+	
 	if (parseInt(e_startatslide.value, 10) > 0) {
-		wp	+= "&start_at_slide='" + parseInt(e_startatslide.value, 10) + "' "; 
+		wp	+= "start_at_slide='" + parseInt(e_startatslide.value, 10) + "' ";
+	}
+	if (parseInt(e_startzoomadjust.value, 10) > 0) {
+		wp	+= "start_zoom_adjust='" + parseInt(e_startzoomadjust.value, 10) + "' ";
 	}
 	
 	wp		+= "]";
@@ -139,9 +157,18 @@ function getLinkAndIframe() {
 	if (hash_bookmark) {
 		vars	+= "&hash_bookmark=" + hash_bookmark;
 	}
+	if (is_debug) {
+		vars	+= "&debug=" + is_debug;
+	}
+	
 	if (parseInt(e_startatslide.value, 10) > 0) {
 		vars	+= "&start_at_slide=" + parseInt(e_startatslide.value, 10); 
 	}
+	
+	if (parseInt(e_startzoomadjust.value, 10) > 0) {
+		vars	+= "&start_zoom_adjust=" + parseInt(e_startzoomadjust.value, 10);
+	}
+	
 	if (e_width.value > 0) {
 		vars	+= "&width=" + e_width.value; 
 	}
