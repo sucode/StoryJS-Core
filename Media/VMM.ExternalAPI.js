@@ -354,7 +354,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 					if (VMM.master_config.googlemaps.api_loaded) {
 						
 					} else {
-						VMM.LoadLib.js(map_url, function() {
+						LoadLib.js(map_url, function() {
 							trace("Google Maps API Library Loaded");
 						});
 					}
@@ -1012,7 +1012,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				
 				if (!VMM.master_config.youtube.active) {
 					if (!VMM.master_config.youtube.api_loaded) {
-						VMM.LoadLib.js('http://www.youtube.com/player_api', function() {
+						LoadLib.js('http://www.youtube.com/player_api', function() {
 							trace("YouTube API Library Loaded");
 						});
 					}
