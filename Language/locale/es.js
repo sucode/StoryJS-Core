@@ -14,24 +14,23 @@ if(typeof VMM != 'undefined') {
 		}, 
 		dateformats: {
 			year: "yyyy",
-		    month_short: "mmm",
-		    month: "mmmm yyyy",
-		    full_short: "d mmm",
-		    full: "d mmmm yyyy",
-		    time_no_seconds_short: "HH:MM",
-		    time_no_seconds_small_date: "HH:MM'<br/><small>'d mmmm yyyy'</small>'",
-		    full_long: "dddd',' d mmm yyyy 'um' HH:MM",
-		    full_long_small_date: "HH:MM'<br/><small>'dddd',' d mmm yyyy'</small>'"
+			month_short: "mmm",
+			month: "mmmm yyyy",
+			full_short: "d mmm",
+			full: "d mmmm yyyy",
+			time_no_seconds_short: "HH:MM",
+			time_no_seconds_small_date: "'<small>'d mmmm yyyy'</small>' HH:MM",
+			full_long: "dddd',' d mmm yyyy HH:MM",
+			full_long_small_date: "HH:MM'<br/><small>d mmm yyyy'</small>'"
 		},
 		messages: {
-			loading_timeline: "Cronología esta cargando",
-		    return_to_title: "Volver al título",
-		    expand_timeline: "Enlargar la cronología",
-		    contract_timeline: "Reducir la cronología",
+			loading_timeline: "Cargando cronología...",
+			return_to_title: "Volver al título",
+			expand_timeline: "Ampliar la cronología",
+			contract_timeline: "Reducir la cronología",
 			wikipedia: "Desde Wikipedia, la enciclopedia libre",
-			loading_content: "cargando",
-			loading: "cargando"
-			
+			loading_content: "Cargando contenido",
+			loading: "Cargando"
 		}
 	}
 }
