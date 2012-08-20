@@ -104,6 +104,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				
 					VMM.attachElement("#"+tweet.id.toString(), twit );
 					VMM.attachElement("#text_thumb_"+tweet.id.toString(), d.text );
+					VMM.attachElement("#marker_content_" + tweet.id.toString(), d.text );
 					
 				})
 				.error(function(jqXHR, textStatus, errorThrown) {
@@ -362,17 +363,42 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 			},
 			
 			create: function(m) {
+				trace(m.url);
+				VMM.ExternalAPI.googlemaps.createAPIMap(m);
+				if (m.url[0].match("msid")) {
+					//VMM.ExternalAPI.googlemaps.createAPIMap(m);
+				} else {
+					//VMM.ExternalAPI.googlemaps.createiFrameMap(m);
+				} 
+				
+			},
+			
+			createiFrameMap: function(m) {
+				var embed_url		= m.url + "&output=embed",
+					mc				= "",
+					unique_map_id	= m.id.toString() + "_gmap";
+					
+				mc				+= "<div class='google-map' id='" + unique_map_id + "' style='width=100%;height=100%;'>";
+				mc				+= "<iframe width='100%' height='100%' frameborder='0' scrolling='no' marginheight='0' marginwidth='0' src='" + embed_url + "'></iframe>";
+				mc				+= "</div>";
+				
+				VMM.attachElement("#" + m.id, mc);
+				
+			},
+			
+			createAPIMap: function(m) {
 				var map_attribution	= "",
 					layer,
 					map,
 					map_options,
-					unique_map_id	= m.id.toString() + "_gmap",
+					unique_map_id			= m.id.toString() + "_gmap",
 					map_attribution_html	= "",
-					location		= new google.maps.LatLng(41.875696,-87.624207),
+					location				= new google.maps.LatLng(41.875696,-87.624207),
 					latlong,
-					zoom			= 11,
-					has_location	= false,
-					has_zoom		= false,
+					zoom					= 11,
+					has_location			= false,
+					has_zoom				= false,
+					api_limit				= false,
 					map_bounds;
 					
 				
@@ -464,7 +490,6 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 				    }
 				}
 				
-				
 				VMM.attachElement("#" + m.id, "<div class='google-map' id='" + unique_map_id + "' style='width=100%;height=100%;'></div>");
 				
 				map		= new google.maps.Map(document.getElementById(unique_map_id), map_options);
@@ -478,7 +503,108 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 					VMM.appendElement("#"+unique_map_id, map_attribution_html);
 				}
 				
-				loadKML();
+				// DETERMINE IF KML IS POSSIBLE
+				if (m.url[0].match("msid")) {
+					loadKML();
+				} else {
+					loadPlaces();
+				} 
+				
+				// PLACES
+				function loadPlaces() {
+					var api_key,
+						places_url,
+						has_key		= false;
+						
+					trace("LOADING PLACES API FOR GOOGLE MAPS");
+						
+					if (VMM.ExternalAPI.keys.google != "") {
+						api_key	= VMM.ExternalAPI.keys.google;
+						has_key	= true;
+					} else {
+						trace("YOU NEED A GOOGLE MAPS API KEY IN ORDER TO USE THIS FEATURE OF TIMELINEJS");
+						trace("FIND OUT HOW TO GET YOUR KEY HERE: https://developers.google.com/places/documentation/#Authentication");
+					}
+					
+					places_url		= "https://maps.googleapis.com/maps/api/place/textsearch/json?key=" + api_key + "&sensor=false&language=" + m.lang + "&";
+					
+					if (type.of(VMM.Util.getUrlVars(m.url)["q"]) == "string") {
+						places_url	+= "query=" + VMM.Util.getUrlVars(m.url)["q"];
+					}
+					
+					if (has_location) {
+						places_url	+= "&location=" + location;
+					} 
+					
+					if (has_key) {
+						VMM.getJSON(places_url, function(d) {
+							trace("PLACES JSON");
+						
+							var places_location 	= "",
+								places_bounds		= "",
+								places_bounds_ne	= "",
+								places_bounds_sw	= "";
+						
+							trace(d);
+						
+							if (d.status == "OVER_QUERY_LIMIT") {
+								trace("OVER_QUERY_LIMIT");
+								if (has_location) {
+									map.panTo(location);
+									if (has_zoom) {
+										map.setZoom(zoom);
+									}
+								} else {
+									trace("DOING TRADITIONAL MAP IFRAME EMBED UNTIL QUERY LIMIT RESTORED");
+									api_limit = true;
+									VMM.ExternalAPI.googlemaps.createiFrameMap(m);
+								}
+							
+							} else {
+								if (d.results.length >= 1) {
+									//location = new google.maps.LatLng(parseFloat(d.results[0].geometry.location.lat),parseFloat(d.results[0].geometry.location.lng));
+									//map.panTo(location);
+							
+									places_bounds_ne	= new google.maps.LatLng(parseFloat(d.results[0].geometry.viewport.northeast.lat),parseFloat(d.results[0].geometry.viewport.northeast.lng));
+									places_bounds_sw	= new google.maps.LatLng(parseFloat(d.results[0].geometry.viewport.southwest.lat),parseFloat(d.results[0].geometry.viewport.southwest.lng));
+							
+									places_bounds = new google.maps.LatLngBounds(places_bounds_sw, places_bounds_ne)
+									map.fitBounds(places_bounds);
+							
+								} else {
+									trace("NO RESULTS");
+								}
+						
+								if (has_location) {
+									map.panTo(location);
+								} 
+								if (has_zoom) {
+									map.setZoom(zoom);
+								}
+							}
+						
+						})
+						.error(function(jqXHR, textStatus, errorThrown) {
+							trace("PLACES JSON ERROR");
+							trace("PLACES JSON ERROR: " + textStatus + " " + jqXHR.responseText);
+						})
+						.success(function(d) {
+							trace("PLACES JSON SUCCESS");
+						});
+					} else {
+						if (has_location) {
+							map.panTo(location);
+							if (has_zoom) {
+								map.setZoom(zoom);
+							}
+						} else {
+							trace("DOING TRADITIONAL MAP IFRAME EMBED BECAUSE NO GOOGLE MAP API KEY WAS PROVIDED");
+							VMM.ExternalAPI.googlemaps.createiFrameMap(m);
+						}
+					}
+					
+					
+				}
 				
 				// KML
 				function loadKML() {
@@ -489,9 +615,10 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 					kml_layer			= new google.maps.KmlLayer(kml_url, {preserveViewport:true});
 					infowindow			= new google.maps.InfoWindow();
 					kml_layer.setMap(map);
-
+					
 					google.maps.event.addListenerOnce(kml_layer, "defaultviewport_changed", function() {
-						map.fitBounds(kml_layer.getDefaultViewport() );
+						//map.fitBounds(kml_layer.getDefaultViewport() );
+					   
 						if (has_location) {
 							map.panTo(location);
 						} 
@@ -510,6 +637,7 @@ if(typeof VMM != 'undefined' && typeof VMM.ExternalAPI == 'undefined') {
 						}
 					});
 				}
+				
 				
 			},
 			

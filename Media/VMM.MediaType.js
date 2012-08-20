@@ -15,7 +15,7 @@ if(typeof VMM != 'undefined' && typeof VMM.MediaType == 'undefined') {
 				start:		0,
 				hd:			false,
 				link:		"",
-				lang:		"",
+				lang:		VMM.Language.lang,
 				uniqueid:	VMM.Util.unique_ID(6)
 			};
 		
