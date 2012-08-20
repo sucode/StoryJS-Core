@@ -15,8 +15,8 @@ LoadLib = (function (doc) {
 		
 		var i			= 0,
 			has_loaded	= false;
-			
-		for (i = 0; i < loaded; i++) {
+		
+		for (i = 0; i < loaded.length; i++) {
 			if (loaded[i] == url) {
 				has_loaded = true;
 			}
