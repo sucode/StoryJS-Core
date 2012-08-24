@@ -5,7 +5,7 @@
 */  
 if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
 	// REPLACE WITH YOUR BASEPATH IF YOU WANT OTHERWISE IT WILL TRY AND FIGURE IT OUT
-	var embed_path = getScriptPath("timeline-embed-generator.js").split("js/")[0];
+	var embed_path = getScriptPath("storyjs-embed-generator.js").split("js/")[0];
 	if (embed_path.match("http")) {
 		embed_path = embed_path;
 	} else if (embed_path == "/") {
@@ -218,7 +218,7 @@ function updateEmbedCode(element, options) {
 	$("#preview-embed-link").attr('href', el.link);
 	$("#preview-embed-iframe").html(el.iframe);
 	
-	
-	
-	
 }
+
+
+
