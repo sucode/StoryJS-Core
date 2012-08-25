@@ -1,18 +1,18 @@
 /*
-	VéritéCo Embed Generator 0.8
+	VéritéCo Embed Generator 2.1
 	Designed and built by Zach Wise digitalartwork.net
 	Date: June 21, 2012
 */  
-if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
+if(typeof generator_embed_path == 'undefined' || typeof generator_embed_path == 'undefined') {
 	// REPLACE WITH YOUR BASEPATH IF YOU WANT OTHERWISE IT WILL TRY AND FIGURE IT OUT
-	var embed_path = getScriptPath("storyjs-embed-generator.js").split("js/")[0];
-	if (embed_path.match("http")) {
-		embed_path = embed_path;
-	} else if (embed_path == "/") {
-		embed_path = "index.html";
+	var generator_embed_path = getScriptPath("storyjs-embed-generator.js").split("js/")[0];
+	if (generator_embed_path.match("http")) {
+		generator_embed_path = generator_embed_path;
+	} else if (generator_embed_path == "/") {
+		generator_embed_path = "index.html";
 	} else {
-		embed_path = embed_path + "index.html";
-	}
+		generator_embed_path = generator_embed_path + "index.html";
+	} 
 }
 function getScriptPath(scriptname) {
 	var scriptTags = document.getElementsByTagName('script'),
@@ -152,7 +152,7 @@ function getLinkAndIframe() {
 	
 	/* IFRAME AND LINK
 	================================================== */
-	vars		= embed_path + "?source=" + source_key;
+	vars		=  generator_embed_path + "?source=" + source_key;
 	vars		+= "&font=" + e_font.value; 
 	vars		+= "&maptype=" + e_maptype.value;
 	vars		+= "&lang=" + e_language.value;

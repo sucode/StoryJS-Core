@@ -1,5 +1,5 @@
 /*
-	VéritéCo StoryJS Embed Loader 1.1
+	VéritéCo StoryJS Embed Loader 2.1
 	Designed and built by Zach Wise digitalartwork.net
 	Date: June 21, 2012
 */  
@@ -13,10 +13,10 @@ var WebFontConfig;
 
 if(typeof embed_path == 'undefined' || typeof embed_path == 'undefined') {
 	// REPLACE WITH YOUR BASEPATH IF YOU WANT OTHERWISE IT WILL TRY AND FIGURE IT OUT
-	var embed_path = getScriptPath("storyjs-embed.js").split("js/")[0];
+	var embed_path = getEmbedScriptPath("storyjs-embed.js").split("js/")[0];
 }
 
-function getScriptPath(scriptname) {
+function getEmbedScriptPath(scriptname) {
 	var scriptTags = document.getElementsByTagName('script'),
 		script_path = "",
 		script_path_end = "";

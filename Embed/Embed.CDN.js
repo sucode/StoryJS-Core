@@ -1,5 +1,5 @@
 /*
-	VéritéCo Timeline CDN 0.8
+	VéritéCo Timeline CDN 2.1
 	Designed and built by Zach Wise digitalartwork.net
 */  
 
