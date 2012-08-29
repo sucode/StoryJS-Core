@@ -121,9 +121,9 @@ if (typeof VMM.Slider != 'undefined') {
 			
 			buildSlide();
 			
-			clearTimeout(timer.pushque);
+			//clearTimeout(timer.pushque);
 			clearTimeout(timer.render);
-			timer.pushque = setTimeout(VMM.ExternalAPI.pushQues, times.pushque);
+			//timer.pushque = setTimeout(VMM.ExternalAPI.pushQues, times.pushque);
 			
 		};
 		
@@ -175,6 +175,7 @@ if (typeof VMM.Slider != 'undefined') {
 		
 		var buildSlide = function() {
 			trace("BUILDSLIDE");
+            trace(data);
 			$wrap	= VMM.appendAndGetElement(element, "<div>", "content");
 			$slide	= VMM.appendAndGetElement($wrap, "<div>");
 			

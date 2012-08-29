@@ -115,7 +115,6 @@ if (typeof VMM == 'undefined') {
 		
 		api_keys_master: {
 			flickr:		"RAIvxHY4hE/Elm5cieh4X5ptMyDpj7MYIxziGxi0WGCcy1s+yr7rKQ==",
-			//google:		"jwNGnYw4hE9lmAez4ll0QD+jo6SKBJFknkopLS4FrSAuGfIwyj57AusuR0s8dAo=",
 			google:		"uQKadH1VMlCsp560gN2aOiMz4evWkl1s34yryl3F/9FJOsn+/948CbBUvKLN46U=",
 			twitter:	""
 		},
@@ -128,73 +127,6 @@ if (typeof VMM == 'undefined') {
 			pushques:		[]
 			
 		},
-		
-		twitter: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		flickr: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		youtube: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		vimeo: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		googlemaps: {
-			active:			false,
-			map_active:		false,
-			places_active:	false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		googledocs: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		googleplus: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		},
-		
-		wikipedia: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[],
-			tries:			0
-		},
-		
-		soundcloud: {
-			active:			false,
-			array:			[],
-			api_loaded:		false,
-			que:			[]
-		}
-		
 	}).init();
 	
 	//VMM.createElement(tag, value, cName, attrs, styles);
@@ -304,7 +236,18 @@ if (typeof VMM == 'undefined') {
 function trace( msg ) {
 	if (VMM.debug) {
 		if (window.console) {
-			console.log(msg);
+            var line = '';
+            try {throw Error('')} catch(error) { 
+                var ss  = error.stack.split('\n');
+                for (var i=0; i<ss.length; i++) {
+                    if (ss[i].match(/\//)) {
+                        line = ss[i+1];
+                        line = line.substring(line.lastIndexOf('/')+1);
+                        break;
+                    } 
+                }
+            }
+			console.log(line + "\t" + msg);
 		} else if ( typeof( jsTrace ) != 'undefined' ) {
 			jsTrace.send( msg );
 		} else {

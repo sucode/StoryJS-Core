@@ -551,10 +551,6 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 				_title		= "",
 				_pos;
 			
-			/* STOP ANY VIDEO PLAYERS ACTIVE
-			================================================== */
-			VMM.ExternalAPI.youtube.stopPlayers();
-			
 			// Set current slide
 			current_slide	= n;
 			_pos			= slides[current_slide].leftpos();

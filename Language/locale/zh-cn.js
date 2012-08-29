@@ -1,8 +1,6 @@
-/* LANGUAGE 
-================================================== */
 if(typeof VMM != 'undefined') {
 	VMM.Language = {
-		lang: "zh-ch",
+		lang: "zh-cn",
 		api: {
 			wikipedia: "zh"
 		},
@@ -29,8 +27,8 @@ if(typeof VMM != 'undefined') {
 			expand_timeline: "伸展时间",
 			contract_timeline: "缩短时间",
 			wikipedia: "From Wikipedia, the free encyclopedia",
-			loading_content: "Loading Content",
-			loading: "Loading"
+			loading_content: "内容加载中...",
+			loading: "加载中..."
 			
 		}
 	}
