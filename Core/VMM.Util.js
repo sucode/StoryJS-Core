@@ -28,13 +28,17 @@ if(typeof VMM != 'undefined' && typeof VMM.Util == 'undefined') {
 		/*	* MERGE CONFIG
 		================================================== */
 		mergeConfig: function(config_main, config_to_merge) {
-			var x;
-			for (x in config_to_merge) {
-				if (Object.prototype.hasOwnProperty.call(config_to_merge, x)) {
-					config_main[x] = config_to_merge[x];
-				}
-			}
-			return config_main;
+            if (typeof(jQuery) != 'undefined') {
+                return jQuery.extend(true, config_main, config_to_merge);
+            } else {
+                var x;
+                for (x in config_to_merge) {
+                    if (Object.prototype.hasOwnProperty.call(config_to_merge, x)) {
+                        config_main[x] = config_to_merge[x];
+                    }
+                }
+                return config_main;
+            }
 		},
 		
 		/*	* GET OBJECT ATTRIBUTE BY INDEX

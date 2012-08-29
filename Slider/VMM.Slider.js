@@ -67,7 +67,12 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 					nav: {
 						width:		100, 
 						height:		200
-					} 
+					}, 
+                    tmpl: {
+                              useTmpl:        false,
+                              hasTmpl:        false,
+                              tmpl:           '${text}'
+                    }
 				} 
 			};
 		}
@@ -292,7 +297,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 			slides = [];
 			
 			for(i = 0; i < d.length; i++) {
-				var _slide = new VMM.Slider.Slide(d[i], $slides_items);
+				var _slide = new VMM.Slider.Slide(d[i], $slides_items, config.slider.tmpl);
 				//_slide.show();
 				slides.push(_slide);
 			}

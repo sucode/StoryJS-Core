@@ -2,9 +2,9 @@
 ================================================== */
 
 if (typeof VMM.Slider != 'undefined') {
-	VMM.Slider.Slide = function(d, _parent) {
+	VMM.Slider.Slide = function(d, _parent, parent_config) {
 		
-		var $media, $text, $slide, $wrap, element, c,
+		var config, $media, $text, $slide, $wrap, element, c,
 			data		= d,
 			slide		= {},
 			element		= "",
@@ -21,10 +21,30 @@ if (typeof VMM.Slider != 'undefined') {
 		_id				= _id + data.uniqueid;
 		this.enqueue	= _enqueue;
 		this.id			= _id;
+        _tmpl           = "${text}",
 		
 		element		=	VMM.appendAndGetElement(_parent, "<div>", "slider-item");
 		c = {slide:"", text: "", media: "", media_element: "", layout: "content-container layout", has: { headline: false, text: false, media: false }};
 		
+        if (typeof parent_config != 'undefined') {
+            config = parent_config;
+        } else {
+            config = {
+                useTmpl : false,
+                hasTmpl : false,
+            }
+        }
+
+        if (config.useTmpl && typeof(jQuery) != 'undefined' && typeof(jQuery.tmpl) != 'undefined') {
+            if (!$.template["__slide_tmpl__"]) {
+                var tmplToComp = _tmpl;
+                if (typeof(config.tmpl) != 'undefined' && config.tmpl.length > 0) {
+                    tmplToComp = config.tmpl;
+                }
+                $.template("__slide_tmpl__", tmplToComp);
+            }
+            config.hasTmpl = true
+        }
 		/* PUBLIC
 		================================================== */
 		this.show = function(skinny) {
@@ -119,7 +139,11 @@ if (typeof VMM.Slider != 'undefined') {
 			preloaded = true;
 			timer.skinny = skinny;
 			
-			buildSlide();
+            if (config.hasTmpl) {
+                buildSlideFromTmpl();
+            } else {
+			    buildSlide();
+            }
 			
 			//clearTimeout(timer.pushque);
 			clearTimeout(timer.render);
@@ -173,6 +197,12 @@ if (typeof VMM.Slider != 'undefined') {
 			}
 		}
 		
+        var buildSlideFromTmpl = function() {
+            trace("BUILDSLIDE FROM TMPL");
+            $wrap = VMM.appendAndGetElement(element, "<div>", "content");
+            $.tmpl('__slide_tmpl__', data).appendTo($wrap);
+        }
+
 		var buildSlide = function() {
 			trace("BUILDSLIDE");
             trace(data);
@@ -236,11 +266,14 @@ if (typeof VMM.Slider != 'undefined') {
 			
 			/* MEDIA
 			================================================== */
-			if (data.asset != null && data.asset != "") {
-				if (data.asset.media != null && data.asset.media != "") {
-					c.has.media	= true;
-					$media		= VMM.appendAndGetElement($slide, "<div>", "media", VMM.MediaElement.create(data.asset, data.uniqueid));
-				}
+			if (data.assets != null && data.assets.length > 0) {
+                for (var index in data.assets) {
+                    var asset = data.assets[index];
+                    if (asset.media != null && asset.media != "") {
+                        c.has.media	= true;
+                        $media		= VMM.appendAndGetElement($slide, "<div>", "media", VMM.MediaElement.create(asset, data.uniqueid));
+                    }
+                }
 			}
 			
 			/* COMBINE

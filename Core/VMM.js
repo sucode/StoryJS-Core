@@ -247,7 +247,8 @@ function trace( msg ) {
                     } 
                 }
             }
-			console.log(line + "\t" + msg);
+			console.log(line);
+            console.log(msg);
 		} else if ( typeof( jsTrace ) != 'undefined' ) {
 			jsTrace.send( msg );
 		} else {
